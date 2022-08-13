@@ -1,4 +1,4 @@
-const { Thought } = require("../models");
+const { User, Thought } = require("../models");
 
 const thoughtController = {
   // get all thoughts
@@ -26,23 +26,48 @@ const thoughtController = {
       .catch((err) => res.json(err));
   },
   // add thought
-  addThought({ params, body }, res) {
+
+  async addThought({ params, body }, res) {
+    //   try {
+    //     const thoughtData = await Thought.create(body);
+    //     console.log("userId type>>", params.userId);
+    //     const dbUserData = await User.findOneAndUpdate(
+    //       { _id: params.userId },
+    //       { $addToSet: { thoughts: thoughtData._id } },
+    //       { new: true }
+    //     );
+    //     console.log("dbuserdata", dbUserData);
+    //     if (!dbUserData) {
+    //       res.json({ message: "No user found with this id!" });
+    //       return;
+    //     }
+    //     res.json(dbUserData);
+    //   } catch (err) {
+    //     res.json(err);
+    //   }
     Thought.create(body)
-      .then(({ _id }) => {
+      .then((thoughtData) => {
+        console.log("_id>>>>", thoughtData._id);
+        console.log("body", body);
         return User.findOneAndUpdate(
           { _id: body.userId },
-          { $push: { thoughts: _id } },
+          { $push: { thoughts: thoughtData._id } },
           { new: true }
         );
+        // return User.findOne({ _id: body.userId });
       })
       .then((dbUserData) => {
+        console.log("dbuserdata", dbUserData);
         if (!dbUserData) {
           res.json({ message: "No user found with this id!" });
           return;
         }
-        res.json(dbUserData);
+        res.json({ message: "Thought created!" });
       })
-      .catch((err) => res.json(err));
+      .catch((err) => {
+        console.log("err", err);
+        res.json(err);
+      });
   },
 
   //   update thought

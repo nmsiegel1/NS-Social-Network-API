@@ -28,7 +28,7 @@ const UserSchema = new Schema(
     ],
   },
   {
-    toJson: {
+    toJSON: {
       virtuals: true,
       getters: true,
     },
