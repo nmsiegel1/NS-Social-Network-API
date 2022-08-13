@@ -2,6 +2,7 @@ const { User, Thought } = require("../models");
 
 const userController = {
   //  get all users
+  // GET /api/users
   getAllUsers(req, res) {
     User.find({})
       // populate users thoughts
@@ -20,6 +21,7 @@ const userController = {
   },
 
   // get user by id
+  // GET /api/users/:userId
   getUserById({ params }, res) {
     User.findOne({ _id: params.userId })
       //  populate users thoughts
@@ -45,6 +47,8 @@ const userController = {
   },
 
   //   create user
+  // POST /api/users
+  // expects "email" "example@email.com", "username" "example"
   createUser({ body }, res) {
     User.create(body)
       .then((dbUserData) => res.json(dbUserData))
@@ -52,6 +56,8 @@ const userController = {
   },
 
   // update user by id
+  // PUT /api/users/:userId
+  // able to update username, email or both
   updateUser({ params, body }, res) {
     User.findOneAndUpdate(
       { _id: params.userId },
@@ -72,6 +78,7 @@ const userController = {
   },
 
   // delete user
+  // DELETE /api/users/:userId
   deleteUser({ params }, res) {
     User.findOneAndDelete({ _id: params.userId })
       .then((dbUserData) => {
@@ -85,6 +92,7 @@ const userController = {
   },
 
   //   add friend
+  // POST api/users/:userId/friends/:friendId
   addFriend({ params }, res) {
     User.findOneAndUpdate(
       { _id: params.userId },
@@ -102,6 +110,7 @@ const userController = {
   },
 
   // delete friend
+  // DELETE api/users/:userId/friends/:friendId
   deleteFriend({ params }, res) {
     User.findOneAndUpdate(
       { _id: params.userId },

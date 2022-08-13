@@ -2,6 +2,7 @@ const { User, Thought } = require("../models");
 
 const thoughtController = {
   // get all thoughts
+  // GET  /api/thoughts
   getAllThoughts(req, res) {
     Thought.find({})
       .populate({ path: "reactions", select: "-__v" })
@@ -12,6 +13,7 @@ const thoughtController = {
   },
 
   // get thought by id
+  // GET  /api/thoughts/:thoughtId
   getThoughtsById({ params }, res) {
     Thought.findOne({ _id: params.thoughtId })
       .populate({ path: "reactions", select: "-__v" })
@@ -26,25 +28,9 @@ const thoughtController = {
       .catch((err) => res.json(err));
   },
   // add thought
-
-  async addThought({ params, body }, res) {
-    //   try {
-    //     const thoughtData = await Thought.create(body);
-    //     console.log("userId type>>", params.userId);
-    //     const dbUserData = await User.findOneAndUpdate(
-    //       { _id: params.userId },
-    //       { $addToSet: { thoughts: thoughtData._id } },
-    //       { new: true }
-    //     );
-    //     console.log("dbuserdata", dbUserData);
-    //     if (!dbUserData) {
-    //       res.json({ message: "No user found with this id!" });
-    //       return;
-    //     }
-    //     res.json(dbUserData);
-    //   } catch (err) {
-    //     res.json(err);
-    //   }
+  // POST  /api/thoughts
+  // expects "userID" "", "username" "", "thoughtText" ""
+  addThought({ body }, res) {
     Thought.create(body)
       .then((thoughtData) => {
         console.log("_id>>>>", thoughtData._id);
@@ -54,7 +40,6 @@ const thoughtController = {
           { $push: { thoughts: thoughtData._id } },
           { new: true }
         );
-        // return User.findOne({ _id: body.userId });
       })
       .then((dbUserData) => {
         console.log("dbuserdata", dbUserData);
@@ -64,13 +49,12 @@ const thoughtController = {
         }
         res.json({ message: "Thought created!" });
       })
-      .catch((err) => {
-        console.log("err", err);
-        res.json(err);
-      });
+      .catch((err) => res.json(err));
   },
 
   //   update thought
+  // PUT /api/thoughts/:thoughtId
+  //able to update username, email, thought text or a combination of these inputs
   updateThought({ params, body }, res) {
     Thought.findOneAndUpdate(
       { _id: params.thoughtId },
@@ -80,8 +64,6 @@ const thoughtController = {
         runValidators: true,
       }
     )
-      //   .populate({ path: "reactions", select: "-__v" })
-      //   .select("-__v")
       .then((dbThoughtData) => {
         if (!dbThoughtData) {
           res.json({ message: "No thought found with this id!" });
@@ -93,6 +75,7 @@ const thoughtController = {
   },
 
   // remove thought
+  // DELETE /api/thoughts/:thoughtId
   removeThought({ params }, res) {
     Thought.findOneAndDelete({ _id: params.thoughtId })
       .then((dbThoughtData) => {
@@ -117,6 +100,7 @@ const thoughtController = {
   },
 
   //   add reaction to thought
+  // POST /api/thoughts/:thoughtId/reactions
   addReaction({ params, body }, res) {
     Thought.findOneAndUpdate(
       { _id: params.thoughtId },
@@ -134,6 +118,7 @@ const thoughtController = {
   },
 
   //   remove reaction
+  // DELETE /api/thoughts/:thoughtId/reactions/:reactionId
   removeReaction({ params }, res) {
     Thought.findOneAndUpdate(
       { _id: params.thoughtId },
