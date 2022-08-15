@@ -37,17 +37,6 @@ const UserSchema = new Schema(
   }
 );
 
-UserSchema.pre(
-  "deleteMany",
-  { document: false, query: true },
-  async function (next) {
-    const thoughts = await this.model.find(this.getFilter());
-    const users = thoughts.map((item) => item._id);
-    await UserLink.deleteMany({ user: { $in: users } });
-    next();
-  }
-);
-
 // create friend count
 UserSchema.virtual("friendCount").get(function () {
   return this.friends.length;

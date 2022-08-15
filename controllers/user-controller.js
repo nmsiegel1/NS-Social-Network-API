@@ -79,14 +79,18 @@ const userController = {
 
   // delete user
   // DELETE /api/users/:userId
-  deleteUser({ params }, res) {
+  deleteUser({ params, body }, res) {
     User.findOneAndDelete({ _id: params.userId })
+      // delete the users thoughts when user is deleted
+      .then((body) => {
+        return Thought.deleteMany({ username: { $in: body.username } });
+      })
       .then((dbUserData) => {
         if (!dbUserData) {
           res.status(404).json({ message: "No user found with this id!" });
           return;
         }
-        res.json({ message: "User deleted" });
+        res.json({ message: "User and their associated thoughts deleted" });
       })
       .catch((err) => res.json(err));
   },
