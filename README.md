@@ -46,7 +46,7 @@ Node.js and MongoDB are required to run this application
 - Get all users: `GET /api/users`
 - Get a single user by its `id`: `GET /api/users/:userId`
 - Update a user by its `id`: `PUT /api/users/:userId`
-- Delete a user by its `id`: `DELETE /api/users/:userId`
+- Delete a user by its `id`: `DELETE /api/users/:userId` (also delets the thoughts associated with the user)
 
 **FRIEND**
 
